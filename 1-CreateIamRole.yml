@@ -1,0 +1,40 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'IAM Role for CloudFormation Admin'
+
+Parameters:
+  RoleName:
+    Type: String
+    Description: 'Name of the IAM role'
+    Default: 'CloudFormationAdminRole'
+
+Resources:
+  CloudFormationAdminRole:
+    Type: 'AWS::IAM::Role'
+    Properties:
+      RoleName: !Ref RoleName
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: 'Allow'
+            Principal:
+              Service: 'cloudformation.amazonaws.com'
+            Action: 'sts:AssumeRole'
+
+  CloudFormationAdminPolicy:
+    Type: 'AWS::IAM::Policy'
+    DependsOn: CloudFormationAdminRole
+    Properties:
+      PolicyName: 'CloudFormationAdminPolicy'
+      Roles:
+        - !Ref CloudFormationAdminRole
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: 'Allow'
+            Action: '*'
+            Resource: '*'
+
+Outputs:
+  CloudFormationAdminRoleArn:
+    Description: 'ARN of the CloudFormation Admin Role'
+    Value: !GetAtt CloudFormationAdminRole.Arn
